@@ -15,5 +15,6 @@ router.get('/totalfirstpassABB' ,testController.getFirstProd);
 router.get('/totalprodABB' ,testController.getTotalProd);
 
 router.get('/badprodABB' ,testController.getBadProd);
+router.get('/fpyABB' ,testController.getFPY);
 
 module.exports = router
