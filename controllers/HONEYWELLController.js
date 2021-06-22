@@ -1,13 +1,12 @@
 const catchAsync = require('../catchAsync')
 const sql = require('mssql')
-const { sqlConfig } = require('../db/baseABB')
-
+const { sqlConfig } = require('../db/baseHONEYWELL')
 
 /****************************** Liste TypeTest*****************************/
 exports.getListetypeTest = catchAsync(async (req, res, next) => {
   var t = req.body.dateDebut
   var t2 = req.body.dateFint
-  var type = `use ABB
+  var type = `use HONEYWELL
   select TypeTest from Test 
   where DateDebut BETWEEN CONVERT(DATETIME, '`+ t + `', 102) AND CONVERT(DATETIME, '`+ t2 + `', 102)
   Group By TypeTest`
@@ -26,10 +25,10 @@ exports.getListetypeTest = catchAsync(async (req, res, next) => {
 })
 
 /****************************** Liste MachineListe *****************************/
-exports.getlisteMachineABB = catchAsync(async (req, res, next) => {
+exports.getlisteMachineHONEYWELL = catchAsync(async (req, res, next) => {
   var t = req.body.dateDebut
   var t2 = req.body.dateFint
-  var machines = `use ABB
+  var machines = `use HONEYWELL
   select Id_Machine from Test 
   where DateDebut BETWEEN CONVERT(DATETIME, '`+ t + `', 102) AND CONVERT(DATETIME, '`+ t2 + `', 102)
   Group By Id_Machine`
@@ -51,7 +50,7 @@ exports.getTopCinqDefaut = catchAsync(async (req, res, next) => {
   var t2 = req.body.dateFint
   var t3 = req.body.TypeTest
   var t4 = req.body.Id_Machine
-  var top5 = `use ABB
+  var top5 = `use HONEYWELL
   SELECT TOP (5)  Mesures.Nom_Mesure, count(*)'quantite' FROM  Mesures INNER JOIN Test ON Mesures.Id_Test = Test.Id
   WHERE (Test.DateDebut BETWEEN CONVERT(DATETIME,'`+ t + `', 102) AND CONVERT(DATETIME,'` + t2 + `', 102)) 
   and TypeTest='`+ t3 + `'
@@ -83,7 +82,7 @@ exports.getDefaut = catchAsync(async (req, res, next) => {
   var t2 = req.body.dateFint
   var t3 = req.body.TypeTest
   var t4 = req.body.Id_Machine
-  var defauts = `use ABB
+  var defauts = `use HONEYWELL
   SELECT Mesures.Nom_Mesure, count(*)'quantite' FROM  Mesures INNER JOIN Test ON Mesures.Id_Test = Test.Id
   WHERE (Test.DateDebut BETWEEN CONVERT(DATETIME,'`+ t + `', 102) AND CONVERT(DATETIME,'` + t2 + `', 102)) 
   and TypeTest='`+ t3 + `'
@@ -112,7 +111,7 @@ exports.getFirstProd = catchAsync(async (req, res, next) => {
   var t2 = req.body.dateFint
   var t3 = req.body.TypeTest
   var t4 = req.body.Id_Machine
-  var firstpassy = `use ABB
+  var firstpassy = `use HONEYWELL
   SELECT count(*)'perpassage' FROM   Test 
   where Id IN
   (SELECT MAX(Id) From Test
@@ -144,7 +143,7 @@ exports.getBadProd = catchAsync(async (req, res, next) => {
   var t2 = req.body.dateFint
   var t3 = req.body.TypeTest
   var t4 = req.body.Id_Machine
-  var bad = `use ABB
+  var bad = `use HONEYWELL
   SELECT count(*)'total' FROM   Test 
   where Id IN
   (SELECT MAX(Id) From Test
@@ -153,7 +152,6 @@ exports.getBadProd = catchAsync(async (req, res, next) => {
   and DateDebut BETWEEN CONVERT(DATETIME, '`+t+`', 102) AND CONVERT(DATETIME, '`+t2+`', 102)
   and Result=0
   Group By Num_Serie
-  
      )                     
    `
   try {
@@ -176,7 +174,7 @@ exports.getTotalProd = catchAsync(async (req, res, next) => {
   var t2 = req.body.dateFint
   var t3 = req.body.TypeTest
   var t4 = req.body.Id_Machine
-  var total = `use ABB
+  var total = `use HONEYWELL
   SELECT count(*)'total' FROM   Test 
   where Id IN
   (SELECT MAX(Id) From Test
@@ -204,8 +202,8 @@ exports.getFPY = catchAsync(async (req, res, next) => {
   var t2 = req.body.dateFint
   var t3 = req.body.TypeTest
   var t4 = req.body.Id_Machine
-  var fpy = `use ABB
-  select cast(((
+  var fpy = `use HONEYWELL
+  select cast(( (
   100.0*
   (
   SELECT count(*)'1er passage' FROM   Test 
@@ -228,11 +226,9 @@ exports.getFPY = catchAsync(async (req, res, next) => {
   and Id_Machine='`+t4+`'
   and DateDebut BETWEEN CONVERT(DATETIME, '`+t+`', 102) AND CONVERT(DATETIME, '`+t2+`', 102)
   Group By Num_Serie
-  
      )       
   )
-  )
-  ) as decimal (8,2))
+  )) as decimal (8,2))
         'Result'              
      `
   try {

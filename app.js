@@ -1,11 +1,12 @@
 const express = require('express')
 require('./db/config')
 require('./db/baseABB')
+require('./db/baseHONEYWELL')
 const user =require('./models/user')
 const userController =require('./controllers/usercontroller')
-const listeTypeTestRouter = require('./router/testRouter')
+const ABBRouter = require('./router/ABBRouter')
+const HONEYWELLRouter = require('./router/HONEYWELLRouter')
 const resetPasswordRouter = require('./router/resetPasswordRouter')
-const cors = require('cors')
 
 
 const app = express()
@@ -27,7 +28,8 @@ app.use((req, res, next) => {
 
 app.use('/user',userController)
 app.use('/reset',resetPasswordRouter);
-app.use('/listeType',listeTypeTestRouter);
+app.use('/ABB',ABBRouter);
+app.use('/HONEYWELL',HONEYWELLRouter);
 app.get('/', (req, res) => {
     res.status(200).send("Welcome to the server")
 })
