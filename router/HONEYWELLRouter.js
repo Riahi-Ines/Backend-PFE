@@ -19,6 +19,8 @@ router.post('/totalprodHONEYWELL' ,HONEYWELLController.getTotalProd);
 
 router.post('/badprodHONEYWELL' ,HONEYWELLController.getBadProd);
 
+router.post('/goodprodHONEYWELL' ,HONEYWELLController.getgoodProd);
+
 router.post('/fpyHONEYWELL' ,HONEYWELLController.getFPY);
 
 module.exports = router

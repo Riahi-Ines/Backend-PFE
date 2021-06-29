@@ -63,7 +63,7 @@ usercontroller.post('/signup',upload.single('photo'),async (req, res) => {
             res.status(201).send({ message: 'user registred succefully' })
 		
     } catch (error) {
-        res.status(400).send({ message: 'API failed', error })
+        res.status(400).send({ message: 'email all ready exist', error })
     }
 })
 

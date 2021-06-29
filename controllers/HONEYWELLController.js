@@ -152,7 +152,7 @@ exports.getBadProd = catchAsync(async (req, res, next) => {
   and DateDebut BETWEEN CONVERT(DATETIME, '`+t+`', 102) AND CONVERT(DATETIME, '`+t2+`', 102)
   and Result=0
   Group By Num_Serie
-     )                     
+     )                   
    `
   try {
     await sql.connect(sqlConfig)
@@ -167,6 +167,35 @@ exports.getBadProd = catchAsync(async (req, res, next) => {
   }
 })
 
+/****************************** good Products *****************************/
+exports.getgoodProd = catchAsync(async (req, res, next) => {
+  var t = req.body.dateDebut
+  var t2 = req.body.dateFint
+  var t3 = req.body.TypeTest
+  var t4 = req.body.Id_Machine
+  var bad = `use HONEYWELL
+  SELECT count(*)'total' FROM   Test 
+  where Id IN
+  (SELECT MAX(Id) From Test
+  where TypeTest='`+t3+`'
+  and Id_Machine='`+t4+`'
+  and DateDebut BETWEEN CONVERT(DATETIME, '`+t+`', 102) AND CONVERT(DATETIME, '`+t2+`', 102)
+  and Result=1
+  Group By Num_Serie
+     )                   
+   `
+  try {
+    await sql.connect(sqlConfig)
+    const badpass = await sql.query(bad)
+
+    res.status(200).send(badpass)
+
+  } catch (err) {
+    res.status(400).send({
+      message: 'request not valide'
+    })
+  }
+})
 
 /******************************Total Products *****************************/
 exports.getTotalProd = catchAsync(async (req, res, next) => {

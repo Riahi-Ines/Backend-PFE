@@ -3,73 +3,74 @@ const nodemailer = require("nodemailer");
 const User = require('../models/user')
 var async = require('async');
 const bcrypt = require('bcrypt');
-var crypto = require('crypto');
 
-exports.resetPassword = catchAsync(async(req, res, next) => {
+exports.resetPassword = catchAsync(async (req, res, next) => {
 
-    console.log('rrrrrrrrrrrrrrrrr')
-    async.waterfall([
-        function(done) {
-          crypto.randomBytes(20, function(err, buf) {
-            var token = buf.toString('hex');
-            done(err, token);
-          });
-        },
-        function(  token, done) {
-           
-       const user =   User.findOne({where:{ email: req.body.email} },
-         function(err, user) {
-                //console.log(user)
-            if (!user) {
-            //   console.log('error', 'No account with that email address exists.');
-            req.flash('error', 'No account with that email address exists.');
-              return res.redirect('/reset');
-            }
-    console.log('step 1')
-            user.resetPasswordToken = token;
-            user.resetPasswordExpires = Date.now() + 3600000; // 1 hour
-    
-            user.save(function(err) {
-              done(err, token, user);
-            });
-          });
-        },
-        function(token, user, done) {
-            console.log('dddddddddddddddddddddddddddddd 2')
-        
-    
-          var smtpTrans = nodemailer.createTransport({
-             service: 'Gmail', 
-             auth: {
-              user: 'maintenanceasteel@gmail.com',
-              pass: '123456789/p'
-            }
-          });
-          var mailOptions = {
-    
-            to: user.email,
-            from: 'maintenanceasteel@gmail.com',
-            subject: 'Node.js Password Reset',
-            text: 'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
-              'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
-              'http://' + req.headers.host + '/reset/' + token + '\n\n' +
-              'If you did not request this, please ignore this email and your password will remain unchanged.\n'
-    
-          };
-          console.log('step 3')
-    
-            smtpTrans.sendMail(mailOptions, function(err) {
-            req.flash('success', 'An e-mail has been sent to ' + user.email + ' with further instructions.');
-            console.log('sent')
-           // res.redirect('/forgot');
-            res.status(200)
-    });
+
+  function makeid(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
     }
-      ], function(err) {
-        console.log('this err' + ' ' + err)
-        //res.redirect('/');
+    return result;
+  }
+
+
+  var x = makeid(10)
+  console.log(x)
+
+  try {
+    let email = req.body.email;
+
+    let user = await User.findOne({where:{email:email}})
+
+    if (!user) {
+        res.status(404).send({ message: "user cannot found" })
+    }
+    else {
+      bcrypt.genSalt(10, function (err, salt) {
+        bcrypt.hash(x, salt, function (err, hash) {
+      
+       User.findOne({ where: { email:req.body.email } }).then(project=>{
+        if (project) {
+          project.update({
+            password: hash
+          })
+        }
+       })
+        })
+        })
+      
+        var transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: "ines556riahi@gmail.com",
+            pass: "lastblood2020"
+          }
+        });
+        var mailOptions = {
+          from: 'ines556riahi@gmail.com',
+          to: req.body.email,
+          subject: ' Mail De Bienvenue',
+          html: "<br> <p> We wanted to let you know that your ProdAst password was reset.  <B> <br><p> The new  pssword is  :<p> " + " " + x
+        };
+        transporter.sendMail(mailOptions, function (error, info) {
+          if (error) {
+            console.log(error);
+          } else {
+            console.log('Email sent: ' + info.response);
+          }
+        });
+        res.status(200).json({
+          message: "check your email for new password ",
+        });
+    }
+} catch (error) {
+    res.status(400).send({ message: 'API failed', error })
+}
   
-      });
+
 
 })
-

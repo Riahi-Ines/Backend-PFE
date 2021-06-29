@@ -16,7 +16,8 @@ const User = connection.sequelize.define('User', {
     },
     photo: {
         type: connection.DataTypes.STRING,
-        allowNull: false,
+        //allowNull: false,
+
     },
     service: {
         type: connection.DataTypes.STRING,

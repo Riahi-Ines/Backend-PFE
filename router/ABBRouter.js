@@ -17,6 +17,8 @@ router.post('/totalprodABB' ,ABBController.getTotalProd);
 
 router.post('/badprodABB' ,ABBController.getBadProd);
 
+router.post('/goodprodABB' ,ABBController.getgoodProd);
+
 router.post('/fpyABB' ,ABBController.getFPY);
 
 
